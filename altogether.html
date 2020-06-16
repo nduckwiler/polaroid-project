@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>altogether</title>
+    <style> body {padding: 0; margin: 0} </style>
+    <link rel="stylesheet" href="altogether.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.min.js"></script>
+    <!-- <script type="text/javascript" src="libraries/p5.js"></script> -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/addons/p5.sound.min.js"></script>
+    <script src="altogether.js"></script>
+  </head>
+  <body>
+    <main>
+      <div id="flex-container">
+        <div id="polaroid-container" class="position-relative">
+          <div id="canvas-container" class="position-absolute">
+            <div id="button-container" class="position-absolute">
+            </div>  
+          </div>
+          <div id="image-container" class="position-relative">
+            <picture>
+              <source media="(min-width: 900px)" srcset="https://cdn.glitch.com/e38ac892-4f4e-45ac-912e-fb4dc1e74e45%2Fexample-polaroid-frame-900-900-cropped.png?v=1591748184159" >
+              <source media="(min-width: 650px)" srcset="https://cdn.glitch.com/e38ac892-4f4e-45ac-912e-fb4dc1e74e45%2Fexample-polaroid-frame-650-650-cropped.png?v=1591748176063" >
+              <img src="https://cdn.glitch.com/e38ac892-4f4e-45ac-912e-fb4dc1e74e45%2Fexample-polaroid-frame-450-450-cropped.png?v=1591748155468" />
+            </picture>
+          </div>
+        </div>
+      </div>
+      <div id="video-container" class="position-absolute">
+
+      </div>
+    </main>
+  </body>
+</html>
