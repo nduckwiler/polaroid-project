@@ -65,7 +65,7 @@ function draw() {
       prevFrame.loadPixels();
 
       // Loop through each pixel
-      for (var x = 0; x < canvasWidth; x++) {
+      for (var x = 0; x < canvasWidth; x = x + 2) {
         for (var y = 0; y < canvasHeight; y++) {
           // Formula for pixels array: https://p5js.org/reference/#/p5.Image/pixels
           var loc = (4 * x) + 4 * canvasWidth * y;
@@ -108,6 +108,12 @@ function draw() {
           mask.pixels[loc+1] = gMask;
           mask.pixels[loc+2] = bMask;
           mask.pixels[loc+3] = aMask;
+
+          // Set next pixel as well (we're looping over every other pixel)
+          mask.pixels[loc + 4] = rMask;
+          mask.pixels[loc+1 + 4] = gMask;
+          mask.pixels[loc+2 + 4] = bMask;
+          mask.pixels[loc+3 + 4] = aMask;
         }
       }
     }
@@ -116,7 +122,7 @@ function draw() {
     image(mask, 0, 0, canvasWidth, canvasHeight);
 
     // Save current pixels for next loop
-    prevFrame.copy(currentFrame, 0, 0, canvasWidth, canvasHeight, 0, 0, canvasWidth, canvasHeight);
+    prevFrame = currentFrame;
   }
 
   // Scale % motion to volume using lesser-exponential formula
