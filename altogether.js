@@ -12,7 +12,6 @@ var canvasHeight = sizes.small.h;
 var canvasPixelCount = canvasWidth * canvasHeight;
 var captureVideo;
 var danceVideo;
-var soundFile;
 var playButton;
 var mask;
 var prevFrame;
@@ -44,9 +43,6 @@ function setup() {
   prevFrame = new p5.Image(canvasWidth, canvasHeight);
   currentFrame = new p5.Image(canvasWidth, canvasHeight);
   mask = new p5.Image(canvasWidth, canvasHeight);
-
-  // Local audio
-  // soundFile = loadSound('./audio/rain-drops.mp3');
 }
 
 function draw() {
@@ -82,9 +78,9 @@ function draw() {
           
           // Capture RGBA values from masking image
           var rMask = mask.pixels[loc];
-          var gMask = mask.pixels[loc+1];
-          var bMask = mask.pixels[loc+2];
-          var aMask = mask.pixels[loc+3];
+          var gMask = mask.pixels[loc + 1];
+          var bMask = mask.pixels[loc + 2];
+          var aMask = mask.pixels[loc + 3];
 
           // If motion is detected in pixel, create a transparent black color
           var d = dist(rPrev, gPrev, bPrev, rCurr, gCurr, bCurr);
@@ -105,15 +101,15 @@ function draw() {
 
           // Set pixel color in masking image
           mask.pixels[loc] = rMask;
-          mask.pixels[loc+1] = gMask;
-          mask.pixels[loc+2] = bMask;
-          mask.pixels[loc+3] = aMask;
+          mask.pixels[loc + 1] = gMask;
+          mask.pixels[loc + 2] = bMask;
+          mask.pixels[loc + 3] = aMask;
 
           // Set next pixel as well (we're looping over every other pixel)
           mask.pixels[loc + 4] = rMask;
-          mask.pixels[loc+1 + 4] = gMask;
-          mask.pixels[loc+2 + 4] = bMask;
-          mask.pixels[loc+3 + 4] = aMask;
+          mask.pixels[loc + 1 + 4] = gMask;
+          mask.pixels[loc + 2 + 4] = bMask;
+          mask.pixels[loc + 3 + 4] = aMask;
         }
       }
     }
@@ -130,7 +126,6 @@ function draw() {
   var scaledVolume;
   scaledVolume = Math.pow(motionPercentage, 0.75);
   danceVideo.volume(scaledVolume);
-  // soundFile.setVolume(scaledVolume);
 
   // For debugging
   // fill('chartreuse');
@@ -162,7 +157,6 @@ function resizeAtBreakpoints() {
 function playAudioVideo() {
   console.log('attempting to loop video and audio...');
   danceVideo.loop();
-  // soundFile.loop();
   initCaptureDevice(canvasWidth, canvasHeight);
 
   this.style('display', 'none');
