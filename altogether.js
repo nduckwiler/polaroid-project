@@ -52,7 +52,7 @@ function draw() {
 
   if (captureSuccess)
   {
-    currentFrame = getVideoPixels();
+    currentFrame = getVideoPixels(captureVideo);
     mask.loadPixels();
     pixelsInMotion = 0;
 
