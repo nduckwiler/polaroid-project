@@ -32,7 +32,7 @@ function setup() {
 
   // initCaptureDevice(canvasWidth, canvasHeight);
 
-  danceVideo = createVideo('https://cdn.glitch.com/e38ac892-4f4e-45ac-912e-fb4dc1e74e45%2FGestureStudy_Final.mp4?v=1591752661347');
+  danceVideo = createVideo('https://cdn.glitch.com/e38ac892-4f4e-45ac-912e-fb4dc1e74e45%2FGestureStudy_Final_minimized.mp4?v=1592367564827');
   danceVideo.parent('#video-container');
   danceVideo.hide();
 
