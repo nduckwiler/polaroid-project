@@ -40,8 +40,8 @@ function setup() {
   playButton.parent('#button-container');
   playButton.mousePressed(playAudioVideo);
 
-  prevFrame = new p5.Image(canvasWidth, canvasHeight);
-  currentFrame = new p5.Image(canvasWidth, canvasHeight);
+  prevFrame = [];
+  currentFrame = [];
   mask = new p5.Image(canvasWidth, canvasHeight);
 }
 
@@ -52,14 +52,13 @@ function draw() {
 
   if (captureSuccess)
   {
-    currentFrame = captureVideo.get();
-    currentFrame.loadPixels();
+    var snapshot = captureVideo.get();
+    snapshot.loadPixels();
+    currentFrame = snapshot.pixels;
     mask.loadPixels();
     pixelsInMotion = 0;
 
     if (prevFrame) {
-      prevFrame.loadPixels();
-
       // Loop through each pixel
       for (var x = 0; x < canvasWidth; x = x + 2) {
         for (var y = 0; y < canvasHeight; y++) {
@@ -67,14 +66,14 @@ function draw() {
           var loc = (4 * x) + 4 * canvasWidth * y;
 
           // Capture RGB values from previous frame
-          var rPrev = prevFrame.pixels[loc];
-          var gPrev = prevFrame.pixels[loc + 1];
-          var bPrev = prevFrame.pixels[loc + 2];
+          var rPrev = prevFrame[loc];
+          var gPrev = prevFrame[loc + 1];
+          var bPrev = prevFrame[loc + 2];
           
           // Capture RGB values from current frame
-          var rCurr = currentFrame.pixels[loc];
-          var gCurr = currentFrame.pixels[loc + 1];
-          var bCurr = currentFrame.pixels[loc + 2];
+          var rCurr = currentFrame[loc];
+          var gCurr = currentFrame[loc + 1];
+          var bCurr = currentFrame[loc + 2];
           
           // Capture RGBA values from masking image
           var rMask = mask.pixels[loc];
