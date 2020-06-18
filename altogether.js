@@ -52,9 +52,7 @@ function draw() {
 
   if (captureSuccess)
   {
-    var snapshot = captureVideo.get();
-    snapshot.loadPixels();
-    currentFrame = snapshot.pixels;
+    currentFrame = getVideoPixels();
     mask.loadPixels();
     pixelsInMotion = 0;
 
@@ -130,6 +128,13 @@ function draw() {
   // fill('chartreuse');
   // text(`pixelsInMotion: ${pixelsInMotion}`, 0, 20,);
   // text(`frameRate: ${frameRate()}`, 0, 50,);
+}
+
+function getVideoPixels(video)
+{
+  var snapshot = video.get();
+  snapshot.loadPixels();
+  return snapshot.pixels;
 }
 
 function windowResized() {
