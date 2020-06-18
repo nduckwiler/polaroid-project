@@ -12,7 +12,6 @@ var canvasHeight = sizes.small.h;
 var canvasPixelCount = canvasWidth * canvasHeight;
 var captureVideo;
 var danceVideo;
-var soundFile;
 var playButton;
 var mask;
 var prevFrame;
@@ -33,7 +32,7 @@ function setup() {
 
   // initCaptureDevice(canvasWidth, canvasHeight);
 
-  danceVideo = createVideo('https://cdn.glitch.com/e38ac892-4f4e-45ac-912e-fb4dc1e74e45%2FGestureStudy_Final.mp4?v=1591752661347');
+  danceVideo = createVideo('https://cdn.glitch.com/e38ac892-4f4e-45ac-912e-fb4dc1e74e45%2FGestureStudy_Final_minimized.mp4?v=1592367564827');
   danceVideo.parent('#video-container');
   danceVideo.hide();
 
@@ -41,12 +40,9 @@ function setup() {
   playButton.parent('#button-container');
   playButton.mousePressed(playAudioVideo);
 
-  prevFrame = new p5.Image(canvasWidth, canvasHeight);
-  currentFrame = new p5.Image(canvasWidth, canvasHeight);
+  prevFrame = [];
+  currentFrame = [];
   mask = new p5.Image(canvasWidth, canvasHeight);
-
-  // Local audio
-  // soundFile = loadSound('./audio/rain-drops.mp3');
 }
 
 function draw() {
@@ -56,35 +52,32 @@ function draw() {
 
   if (captureSuccess)
   {
-    currentFrame = captureVideo.get();
-    currentFrame.loadPixels();
+    currentFrame = getVideoPixels();
     mask.loadPixels();
     pixelsInMotion = 0;
 
     if (prevFrame) {
-      prevFrame.loadPixels();
-
       // Loop through each pixel
-      for (var x = 0; x < canvasWidth; x++) {
+      for (var x = 0; x < canvasWidth; x = x + 2) {
         for (var y = 0; y < canvasHeight; y++) {
           // Formula for pixels array: https://p5js.org/reference/#/p5.Image/pixels
           var loc = (4 * x) + 4 * canvasWidth * y;
 
           // Capture RGB values from previous frame
-          var rPrev = prevFrame.pixels[loc];
-          var gPrev = prevFrame.pixels[loc + 1];
-          var bPrev = prevFrame.pixels[loc + 2];
+          var rPrev = prevFrame[loc];
+          var gPrev = prevFrame[loc + 1];
+          var bPrev = prevFrame[loc + 2];
           
           // Capture RGB values from current frame
-          var rCurr = currentFrame.pixels[loc];
-          var gCurr = currentFrame.pixels[loc + 1];
-          var bCurr = currentFrame.pixels[loc + 2];
+          var rCurr = currentFrame[loc];
+          var gCurr = currentFrame[loc + 1];
+          var bCurr = currentFrame[loc + 2];
           
           // Capture RGBA values from masking image
           var rMask = mask.pixels[loc];
-          var gMask = mask.pixels[loc+1];
-          var bMask = mask.pixels[loc+2];
-          var aMask = mask.pixels[loc+3];
+          var gMask = mask.pixels[loc + 1];
+          var bMask = mask.pixels[loc + 2];
+          var aMask = mask.pixels[loc + 3];
 
           // If motion is detected in pixel, create a transparent black color
           var d = dist(rPrev, gPrev, bPrev, rCurr, gCurr, bCurr);
@@ -105,9 +98,15 @@ function draw() {
 
           // Set pixel color in masking image
           mask.pixels[loc] = rMask;
-          mask.pixels[loc+1] = gMask;
-          mask.pixels[loc+2] = bMask;
-          mask.pixels[loc+3] = aMask;
+          mask.pixels[loc + 1] = gMask;
+          mask.pixels[loc + 2] = bMask;
+          mask.pixels[loc + 3] = aMask;
+
+          // Set next pixel as well (we're looping over every other pixel)
+          mask.pixels[loc + 4] = rMask;
+          mask.pixels[loc + 1 + 4] = gMask;
+          mask.pixels[loc + 2 + 4] = bMask;
+          mask.pixels[loc + 3 + 4] = aMask;
         }
       }
     }
@@ -116,7 +115,7 @@ function draw() {
     image(mask, 0, 0, canvasWidth, canvasHeight);
 
     // Save current pixels for next loop
-    prevFrame.copy(currentFrame, 0, 0, canvasWidth, canvasHeight, 0, 0, canvasWidth, canvasHeight);
+    prevFrame = currentFrame;
   }
 
   // Scale % motion to volume using lesser-exponential formula
@@ -124,12 +123,18 @@ function draw() {
   var scaledVolume;
   scaledVolume = Math.pow(motionPercentage, 0.75);
   danceVideo.volume(scaledVolume);
-  // soundFile.setVolume(scaledVolume);
 
   // For debugging
   // fill('chartreuse');
   // text(`pixelsInMotion: ${pixelsInMotion}`, 0, 20,);
   // text(`frameRate: ${frameRate()}`, 0, 50,);
+}
+
+function getVideoPixels(video)
+{
+  var snapshot = video.get();
+  snapshot.loadPixels();
+  return snapshot.pixels;
 }
 
 function windowResized() {
@@ -156,7 +161,6 @@ function resizeAtBreakpoints() {
 function playAudioVideo() {
   console.log('attempting to loop video and audio...');
   danceVideo.loop();
-  // soundFile.loop();
   initCaptureDevice(canvasWidth, canvasHeight);
 
   this.style('display', 'none');
