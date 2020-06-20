@@ -18,46 +18,31 @@ div.position-absolute {
 div#canvas-container {
   z-index: auto;
 }
-@media (max-width: 649px) {
+
+@media (max-width: 509px), (max-height: 619px) {
   div#canvas-container {
     left: 17px;
     top: 17px;
   }
 }
 
-@media (min-width: 650px) {
+@media (min-width: 510px) and (min-height: 620px) {
   div#canvas-container {
     left: 25px;
     top: 26px;
   }
 }
 
-@media (min-width: 900px) {
+@media (min-width: 705px) and (min-height: 855px) {
   div#canvas-container {
     left: 33px;
     top: 36px;
   }
-} */
-/* @media (max-width: 649px) {
-  div#canvas-container {
-    left: 76px;
-    top: 20px;
-  }
-}
+} 
 
-@media (min-width: 650px) {
-  div#canvas-container {
-    left: 111px;
-    top: 42px;
-  }
+canvas {
+  background-color: black;
 }
-
-@media (min-width: 900px) {
-  div#canvas-container {
-    left: 152px;
-    top: 58px;
-  }
-} */
 
 div#image-container {
   z-index: 1;
