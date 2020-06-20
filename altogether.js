@@ -3,9 +3,9 @@
 
 var canvas;
 var sizes = {
-  'small': {w: 320, h: 330},
-  'medium': {w: 450, h: 460 },
-  'large': {w: 625, h: 640 },
+  'small': {w: 320, h: 330, minW: 0, minH: 0 },
+  'medium': {w: 450, h: 460, minW: 510, minH: 620 },
+  'large': {w: 625, h: 640, minW: 705, minH: 855 },
 }
 var canvasWidth = sizes.small.w;
 var canvasHeight = sizes.small.h;
@@ -21,6 +21,7 @@ var threshold = 30;
 var captureSuccess = false;
 
 function preload() {
+  alertIfIE();
 }
 
 function setup() {
@@ -142,10 +143,10 @@ function windowResized() {
 }
 
 function resizeAtBreakpoints() {
-  if (windowWidth >= 900) {
+  if (windowWidth >= sizes.large.minW && windowHeight >= sizes.large.minH) {
     canvasWidth = sizes.large.w;
     canvasHeight = sizes.large.h;
-  } else if (windowWidth >= 650) {
+  } else if (windowWidth >= sizes.medium.minW && windowHeight >= sizes.medium.minH) {
     canvasWidth = sizes.medium.w;
     canvasHeight = sizes.medium.h;
   } else {
@@ -181,4 +182,17 @@ function initCaptureDevice(width, height) {
   } catch(_err) {
     console.log('[initCaptureDevice] capture error: ' + _err);
   }
+}
+
+function alertIfIE() {
+
+  var ua = window.navigator.userAgent;
+  var msie = ua.indexOf("MSIE ");
+
+  if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))  // If Internet Explorer, return version number
+  {
+      alert("Sorry! This site doesn't run well on Internet Explorer. Try another browser like Edge, Chrome, Safari, or Firefox.");
+  }
+
+  return false;
 }
