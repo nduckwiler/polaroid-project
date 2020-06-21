@@ -1,10 +1,21 @@
+html {
+  font-size: 14px;
+}
+
 main {
   position: relative;
 }
 
+/* Background pattern from Toptal Subtle Patterns */
+/* https://www.toptal.com/designers/subtlepatterns */
 div#flex-container {
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-image: url("https://cdn.glitch.com/e38ac892-4f4e-45ac-912e-fb4dc1e74e45%2Fcork-board.png?v=1592704940959");
+  background-repeat: repeat;
+  background-size: 475px;
 }
 
 div.position-relative {
@@ -15,6 +26,9 @@ div.position-absolute {
   position: absolute;
 }
 
+img {
+ box-shadow: 12px 12px 12px black;  
+}
 div#canvas-container {
   z-index: auto;
 }
@@ -24,12 +38,20 @@ div#canvas-container {
     left: 17px;
     top: 17px;
   }
+
+  html {
+    font-size: 9px;
+  }
 }
 
 @media (min-width: 510px) and (min-height: 620px) {
   div#canvas-container {
     left: 25px;
     top: 26px;
+  }
+
+  html {
+    font-size: 14px;
   }
 }
 
@@ -38,6 +60,10 @@ div#canvas-container {
     left: 33px;
     top: 36px;
   }
+
+  html {
+    font-size: 18px;
+  }
 } 
 
 canvas {
@@ -45,6 +71,14 @@ canvas {
 }
 
 div#image-container {
+  z-index: 1;
+}
+
+div#credits-container {
+  bottom: 0;
+  padding: 1rem;
+  font-family: 'Permanent Marker', cursive;
+  font-size: 1rem;
   z-index: 1;
 }
 
