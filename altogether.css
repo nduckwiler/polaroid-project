@@ -42,6 +42,10 @@ div#canvas-container {
   html {
     font-size: 9px;
   }
+
+  div#credits-container {
+    line-height: 1.25rem;
+  }
 }
 
 @media (min-width: 510px) and (min-height: 620px) {
@@ -51,7 +55,7 @@ div#canvas-container {
   }
 
   html {
-    font-size: 14px;
+    font-size: 12px;
   }
 }
 
@@ -62,7 +66,7 @@ div#canvas-container {
   }
 
   html {
-    font-size: 18px;
+    font-size: 16px;
   }
 } 
 
