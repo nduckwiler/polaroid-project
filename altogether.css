@@ -109,6 +109,17 @@ div#button-container {
   padding-top: 1rem;
   padding-bottom: 1rem;
   cursor: pointer;
+  font-family: 'Permanent Marker', cursive;
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  box-shadow: 6px 6px 6px black;  
+  background-color: #FAE564;
+  transform: rotate(0.01turn);
+}
+
+button.disappearing {
+  display: none;
 }
 
 video#gesture-study {

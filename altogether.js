@@ -33,9 +33,8 @@ function setup() {
 
   danceVideo = document.querySelector('video#gesture-study');
 
-  playButton = createButton('Play');
-  playButton.parent('#button-container');
-  playButton.mousePressed(playAudioVideo);
+  playButton = document.querySelector('div#button-container button');
+  playButton.onclick = playAudioVideo;
 
   resizeAtBreakpoints();
 
@@ -173,8 +172,7 @@ function playAudioVideo() {
   danceVideo.loop = true;
   danceVideo.play();
   initCaptureDevice(canvasWidth, canvasHeight);
-
-  this.style('display', 'none');
+  this.classList.add('disappearing');
 }
 
 // Try to access camera
