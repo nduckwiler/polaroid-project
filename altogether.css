@@ -29,12 +29,12 @@ div.position-absolute {
 img {
  box-shadow: 12px 12px 12px black;  
 }
-div#canvas-container {
+div#interaction-container {
   z-index: auto;
 }
 
 @media (max-width: 509px), (max-height: 619px) {
-  div#canvas-container {
+  div#interaction-container {
     left: 17px;
     top: 17px;
   }
@@ -49,7 +49,7 @@ div#canvas-container {
 }
 
 @media (min-width: 510px) and (min-height: 620px) {
-  div#canvas-container {
+  div#interaction-container {
     left: 25px;
     top: 26px;
   }
@@ -60,7 +60,7 @@ div#canvas-container {
 }
 
 @media (min-width: 705px) and (min-height: 855px) {
-  div#canvas-container {
+  div#interaction-container {
     left: 33px;
     top: 36px;
   }
@@ -70,8 +70,16 @@ div#canvas-container {
   }
 } 
 
-canvas {
-  background-color: black;
+div#canvas-container {
+  z-index: 1;
+}
+
+div#button-container {
+  z-index: 2;
+}
+
+div#gesture-study-container {
+  z-index: 0;
 }
 
 div#image-container {
@@ -100,4 +108,9 @@ div#button-container {
   padding-right: 2rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
+  cursor: pointer;
+}
+
+video#gesture-study {
+  object-fit: fill;
 }
