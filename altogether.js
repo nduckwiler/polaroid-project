@@ -117,6 +117,9 @@ function draw() {
 
     // Save current pixels for next loop
     prevFrame = currentFrame;
+  } else {
+    // captureSuccess is false
+    pixelsInMotion = canvasPixelCount;
   }
 
   // Scale % motion to volume using lesser-exponential formula
@@ -164,6 +167,8 @@ function resizeAtBreakpoints() {
 function playAudioVideo() {
   console.log('attempting to loop video and audio...');
 
+  initCaptureDevice(canvasWidth, canvasHeight);
+
   // check if context is in suspended state (autoplay policy)
   if (audioContext.state === 'suspended') {
     audioContext.resume();
@@ -171,22 +176,22 @@ function playAudioVideo() {
 
   danceVideo.loop = true;
   danceVideo.play();
-  initCaptureDevice(canvasWidth, canvasHeight);
   this.classList.add('disappearing');
 }
 
 // Try to access camera
 function initCaptureDevice(width, height) {
   try {
-    captureVideo = createCapture(VIDEO);
-    captureVideo.size(width, height);
-    captureVideo.elt.setAttribute('playsinline', '');
-    captureVideo.hide();
-    captureSuccess = true;
-    console.log(
-      '[initCaptureDevice] capture ready. Resolution: ' +
-      captureVideo.width + ' ' + captureVideo.height
-    );
+    captureVideo = createCapture(VIDEO, function() {
+      captureVideo.size(width, height);
+      captureVideo.elt.setAttribute('playsinline', '');
+      captureVideo.hide();
+      captureSuccess = true;
+      console.log(
+        '[initCaptureDevice] capture ready. Resolution: ' +
+        captureVideo.width + ' ' + captureVideo.height
+      );
+    });
   } catch(_err) {
     console.log('[initCaptureDevice] capture error: ' + _err);
   }
