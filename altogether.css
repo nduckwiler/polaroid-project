@@ -120,6 +120,9 @@ div#button-container {
 
 button.disappearing {
   display: none;
+  transition-property: opacity;
+  transition-duration: 0.5s;
+  opacity: 0;
 }
 
 video#gesture-study {
