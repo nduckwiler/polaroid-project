@@ -12,8 +12,9 @@ var canvasHeight = sizes.small.h;
 var canvasPixelCount = canvasWidth * canvasHeight;
 var captureVideo;
 var danceVideo;
+var audioContext;
+var filterNode;
 var playButton;
-var mask;
 var prevFrame;
 var currentFrame;
 var recovery = 10;
@@ -26,35 +27,36 @@ function preload() {
 
 function setup() {
   canvas = createCanvas();
-  resizeAtBreakpoints();
   canvas.parent('#canvas-container');
 
   pixelDensity(1);
 
-  // initCaptureDevice(canvasWidth, canvasHeight);
+  danceVideo = document.querySelector('video#gesture-study');
 
-  danceVideo = createVideo('https://cdn.glitch.com/e38ac892-4f4e-45ac-912e-fb4dc1e74e45%2FGestureStudy_Final_minimized.mp4?v=1592367564827');
-  danceVideo.parent('#video-container');
-  danceVideo.hide();
+  playButton = document.querySelector('div#button-container button');
+  playButton.onclick = playAudioVideo;
 
-  playButton = createButton('Play');
-  playButton.parent('#button-container');
-  playButton.mousePressed(playAudioVideo);
+  resizeAtBreakpoints();
 
   prevFrame = [];
   currentFrame = [];
-  mask = new p5.Image(canvasWidth, canvasHeight);
+
+  var AudioContext = window.AudioContext || window.webkitAudioContext;
+  audioContext = new AudioContext();
+  const track = audioContext.createMediaElementSource(danceVideo);
+
+  filterNode = audioContext.createBiquadFilter();
+  track.connect(filterNode);
+  filterNode.connect(audioContext.destination);
 }
 
 function draw() {
   var pixelsInMotion = 0;
 
-  image(danceVideo, 0, 0, canvasWidth, canvasHeight);
-
   if (captureSuccess)
   {
     currentFrame = getVideoPixels(captureVideo);
-    mask.loadPixels();
+    loadPixels();
     pixelsInMotion = 0;
 
     if (prevFrame) {
@@ -75,10 +77,10 @@ function draw() {
           var bCurr = currentFrame[loc + 2];
           
           // Capture RGBA values from masking image
-          var rMask = mask.pixels[loc];
-          var gMask = mask.pixels[loc + 1];
-          var bMask = mask.pixels[loc + 2];
-          var aMask = mask.pixels[loc + 3];
+          var rMask = pixels[loc];
+          var gMask = pixels[loc + 1];
+          var bMask = pixels[loc + 2];
+          var aMask = pixels[loc + 3];
 
           // If motion is detected in pixel, create a transparent black color
           var d = dist(rPrev, gPrev, bPrev, rCurr, gCurr, bCurr);
@@ -98,33 +100,36 @@ function draw() {
           }
 
           // Set pixel color in masking image
-          mask.pixels[loc] = rMask;
-          mask.pixels[loc + 1] = gMask;
-          mask.pixels[loc + 2] = bMask;
-          mask.pixels[loc + 3] = aMask;
+          pixels[loc] = rMask;
+          pixels[loc + 1] = gMask;
+          pixels[loc + 2] = bMask;
+          pixels[loc + 3] = aMask;
 
           // Set next pixel as well (we're looping over every other pixel)
-          mask.pixels[loc + 4] = rMask;
-          mask.pixels[loc + 1 + 4] = gMask;
-          mask.pixels[loc + 2 + 4] = bMask;
-          mask.pixels[loc + 3 + 4] = aMask;
+          pixels[loc + 4] = rMask;
+          pixels[loc + 1 + 4] = gMask;
+          pixels[loc + 2 + 4] = bMask;
+          pixels[loc + 3 + 4] = aMask;
         }
       }
     }
-    // Draw mask
-    mask.updatePixels();
-    image(mask, 0, 0, canvasWidth, canvasHeight);
+    updatePixels();
 
     // Save current pixels for next loop
     prevFrame = currentFrame;
+  } else {
+    // captureSuccess is false
+    pixelsInMotion = canvasPixelCount;
   }
 
   // Scale % motion to volume using lesser-exponential formula
   var motionPercentage = pixelsInMotion / canvasPixelCount;
   var scaledVolume;
-  scaledVolume = Math.pow(motionPercentage, 0.75);
-  danceVideo.volume(scaledVolume);
-
+  scaledVolume = map(motionPercentage, 0, 1, .5, 1, true);
+  danceVideo.volume = scaledVolume;
+  var filterFrequency = map(motionPercentage, 0, 0.6, 500, 4000, false);
+  filterNode.frequency.value = filterFrequency;
+  
   // For debugging
   // fill('chartreuse');
   // text(`pixelsInMotion: ${pixelsInMotion}`, 0, 20,);
@@ -144,14 +149,14 @@ function windowResized() {
 
 function resizeAtBreakpoints() {
   if (windowWidth >= sizes.large.minW && windowHeight >= sizes.large.minH) {
-    canvasWidth = sizes.large.w;
-    canvasHeight = sizes.large.h;
+    danceVideo.width = canvasWidth = sizes.large.w;
+    danceVideo.height = canvasHeight = sizes.large.h;
   } else if (windowWidth >= sizes.medium.minW && windowHeight >= sizes.medium.minH) {
-    canvasWidth = sizes.medium.w;
-    canvasHeight = sizes.medium.h;
+    danceVideo.width = canvasWidth = sizes.medium.w;
+    danceVideo.height = canvasHeight = sizes.medium.h;
   } else {
-    canvasWidth = sizes.small.w;
-    canvasHeight = sizes.small.h;
+    danceVideo.width = canvasWidth = sizes.small.w;
+    danceVideo.height = canvasHeight = sizes.small.h;
   }
 
   canvasPixelCount = canvasWidth * canvasHeight;
@@ -161,24 +166,32 @@ function resizeAtBreakpoints() {
 
 function playAudioVideo() {
   console.log('attempting to loop video and audio...');
-  danceVideo.loop();
+
   initCaptureDevice(canvasWidth, canvasHeight);
 
-  this.style('display', 'none');
+  // check if context is in suspended state (autoplay policy)
+  if (audioContext.state === 'suspended') {
+    audioContext.resume();
+  }
+
+  danceVideo.loop = true;
+  danceVideo.play();
+  this.classList.add('disappearing');
 }
 
 // Try to access camera
 function initCaptureDevice(width, height) {
   try {
-    captureVideo = createCapture(VIDEO);
-    captureVideo.size(width, height);
-    captureVideo.elt.setAttribute('playsinline', '');
-    captureVideo.hide();
-    captureSuccess = true;
-    console.log(
-      '[initCaptureDevice] capture ready. Resolution: ' +
-      captureVideo.width + ' ' + captureVideo.height
-    );
+    captureVideo = createCapture(VIDEO, function() {
+      captureVideo.size(width, height);
+      captureVideo.elt.setAttribute('playsinline', '');
+      captureVideo.hide();
+      captureSuccess = true;
+      console.log(
+        '[initCaptureDevice] capture ready. Resolution: ' +
+        captureVideo.width + ' ' + captureVideo.height
+      );
+    });
   } catch(_err) {
     console.log('[initCaptureDevice] capture error: ' + _err);
   }
